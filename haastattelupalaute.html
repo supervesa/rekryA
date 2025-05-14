@@ -108,14 +108,14 @@
             color: var(--color-text-heading-h2);
             font-size: var(--font-size-h2); 
             margin-top: 30px; 
-            margin-bottom: 10px; /* Pienennetty väliä ennen kuvausta */
+            margin-bottom: 10px; 
             border-bottom: 1px solid var(--border-color-light);
             padding-bottom: 8px; 
         }
-        .section-description { /* Tyyli kysymysryhmän kuvaukselle */
+        .section-description {
             font-size: 0.9em; 
             color: #555; 
-            margin-top: -5px; /* Nosta lähemmäs otsikkoa */
+            margin-top: -5px; 
             margin-bottom: 20px;
             font-style: italic;
         }
@@ -279,10 +279,10 @@
         }
 
         textarea {
-            min-height: 80px; /* Oletuskorkeus pienemmille tekstialueille */
+            min-height: 80px; 
             resize: vertical;
         }
-        textarea[name="lisatietoa_muuta"] { /* Isompi tekstialue yleisille lisätiedoille */
+        textarea[name="lisatietoa_muuta"] { 
             min-height: 120px;
         }
 
@@ -433,17 +433,21 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
+        // MUUTOS: Koko JavaScript-koodi kääritty DOMContentLoaded-tapahtumaan
+        document.addEventListener('DOMContentLoaded', () => {
+            const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co'; 
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
 
-        if (typeof supabaseJs === 'undefined') {
-            console.error('Supabase client (supabaseJs) ei ole ladattu.');
-            const feedbackDiv = document.getElementById('form-feedback');
-            if (feedbackDiv) {
-                feedbackDiv.textContent = 'Virhe alustuksessa. Yritä myöhemmin uudelleen.';
-                feedbackDiv.className = 'error';
+            if (typeof supabaseJs === 'undefined') {
+                console.error('Supabase client (supabaseJs) ei ole ladattu.');
+                const feedbackDiv = document.getElementById('form-feedback');
+                if (feedbackDiv) {
+                    feedbackDiv.textContent = 'Virhe alustuksessa. Yritä myöhemmin uudelleen.';
+                    feedbackDiv.className = 'error';
+                }
+                return; // Lopetetaan suoritus, jos Supabase ei ole ladattu
             }
-        } else {
+            
             const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             const form = document.getElementById('interviewFeedbackForm');
             const feedbackDiv = document.getElementById('form-feedback');
@@ -544,7 +548,7 @@
                     }
                 }
             });
-        }
+        }); // DOMContentLoaded loppuu
     </script>
 </body>
 </html>
