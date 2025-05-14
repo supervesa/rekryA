@@ -353,7 +353,7 @@
                 <output class="slider-value">3</output>
             </div>
 
-            <h2>2. Haastattelun suorituskyky ja kommunikaatio</h2>
+            <h2>2. Haastattelun suorituskyky ja kommunikaatio/n</h2>
             <p class="section-description"><em>(Arvioi, miten hakija esiintyi ja kommunikoi haastattelutilanteessa)</em></p>
             
             <div class="chip-group-container">
@@ -433,22 +433,24 @@
     </div>
 
     <script>
-        // MUUTOS: Koko JavaScript-koodi kääritty DOMContentLoaded-tapahtumaan
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => { // KÄÄRITTY KOKO SKRIPTI
             const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co'; 
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
 
-            if (typeof supabaseJs === 'undefined') {
-                console.error('Supabase client (supabaseJs) ei ole ladattu.');
+            // Tarkistetaan, onko globaali supabase-objekti olemassa (CDN:n kautta ladattu)
+            // ja onko sillä createClient-metodi.
+            if (typeof supabase === 'undefined' || typeof supabase.createClient !== 'function') {
+                console.error('Supabase client (supabase.createClient) ei ole ladattu tai se ei ole funktio.');
                 const feedbackDiv = document.getElementById('form-feedback');
                 if (feedbackDiv) {
                     feedbackDiv.textContent = 'Virhe alustuksessa. Yritä myöhemmin uudelleen.';
                     feedbackDiv.className = 'error';
                 }
-                return; // Lopetetaan suoritus, jos Supabase ei ole ladattu
+                return; 
             }
             
-            const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            // Alustetaan Supabase client käyttäen globaalia supabase-objektia
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             const form = document.getElementById('interviewFeedbackForm');
             const feedbackDiv = document.getElementById('form-feedback');
             const submitButton = document.getElementById('submitButton');
@@ -528,7 +530,8 @@
 
                 console.log("Lähetetään Supabaseen (haastattelupalaute):", dataToSubmit);
 
-                const { data, error } = await supabase
+                // Käytetään supabaseClient-muuttujaa, joka on alustettu oikein
+                const { data, error } = await supabaseClient 
                     .from('haastattelut') 
                     .insert([dataToSubmit])
                     .select();
