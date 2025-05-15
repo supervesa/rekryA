@@ -89,6 +89,10 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+.application-info {
+    display:none;
+}
+
 h1 {
     color: var(--color-text-heading-h1);
     text-align: center;
