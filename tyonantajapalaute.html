@@ -3,402 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Työnantajapalaute Hakemuksesta</title>
+    <title>Työnantajapalaute</title> <link rel="stylesheet" href="tyylit.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
-    <style>
-        :root {
-          /* Font Families */
-          --font-family-main: 'Nunito Sans', sans-serif;
-          --font-family-chip: Verdana, sans-serif;
-
-          /* Font Sizes - Base and Relative */
-          --font-size-base: 16px; 
-          --font-size-h1: 2.8em;
-          --font-size-h2: 1.4em;
-          --font-size-legend: 1em; 
-          --font-size-label: 0.95em;
-          --font-size-input: 1em; 
-          --font-size-chip: 0.9em;
-          --font-size-slider-value: 0.9em;
-          --font-size-button: 1em;
-
-          /* User's Provided Colors (aliased for clarity) */
-          --user-off-black: #333333;
-          --user-off-white: #F6F6ED;
-          --user-primary-color-text: #2c3e50; 
-          --user-secondary-color-bg: #f2f4f5;
-          --user-light-buff: #F0EADC;
-          --user-cloud-white: #F2F1E6;
-          --user-background-light: #fafaf0;
-          --user-background-medium: #f0f0f0;
-          --user-background-lighter: #f5f5e6;
-          --user-warm-gray-1: #ede8e1;
-          --user-warm-grey-2: #dcd6cf;
-          --user-stone-grey: #ccc5b9;
-          --user-greige: #beb7a4;
-          --user-accent-orange: #ff8c00;
-          --user-accent-turquoise: #40e0d0;
-
-          /* Semantic Color Variables */
-          --color-text-default: var(--user-off-black);
-          --color-text-heading-h1: var(--user-primary-color-text);
-          --color-text-heading-h2: #34495e; 
-          --color-text-label: var(--user-off-black); 
-          --color-text-legend: var(--user-off-black);
-          --color-text-chip-default: #495057;
-          --color-text-chip-selected: var(--user-primary-color-text); 
-          --color-text-slider-value: white;
-          --color-text-button: white;
-          --color-text-feedback-success: #155724;
-          --color-text-feedback-error: #721c24;
-
-          --bg-page: #f4f4f4;
-          --bg-container: white;
-          --bg-input: white; 
-          --bg-chip-default: #e9ecef; 
-          --bg-chip-selected: #99caff; 
-          --bg-slider-track-start: #99caff; 
-          --bg-slider-track-end: #007bff;   
-          --bg-slider-thumb: #007bff;
-          --bg-slider-value: #007bff;
-          --bg-button-submit: #28a745;
-          --bg-button-submit-hover: #218838;
-          --bg-button-disabled: #aaa;
-          --bg-feedback-success: #d4edda;
-          --bg-feedback-error: #f8d7da;
-
-          /* Border Colors */
-          --border-color-light: #eee;
-          --border-color-medium: #ddd;
-          --border-color-input: #ccc;
-          --border-color-chip-selected: #77aaff;
-          --border-color-focus: #007bff;
-          --box-shadow-focus: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-          --border-feedback-success: #c3e6cb;
-          --border-feedback-error: #f5c6cb;
-        }
-
-        body {
-            font-family: var(--font-family-main);
-            line-height: 1.6;
-            color: var(--color-text-default);
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 0 20px;
-            background-color: var(--bg-page);
-        }
-        .container {
-            background-color: var(--bg-container);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: var(--color-text-heading-h1);
-            text-align: center;
-            margin-bottom: 30px; 
-            font-size: var(--font-size-h1);
-            font-weight: 700; 
-            letter-spacing: -1px; 
-        }
-        h2 {
-            color: var(--color-text-heading-h2);
-            font-size: var(--font-size-h2); 
-            margin-top: 30px; 
-            margin-bottom: 15px; 
-            border-bottom: 1px solid var(--border-color-light);
-            padding-bottom: 8px; 
-        }
-        label { 
-            display: block;
-            margin-bottom: 6px; 
-            font-weight: 600; 
-            font-size: var(--font-size-label);
-            color: var(--color-text-label);
-        }
-        
-        .chip-group-container {
-            margin-bottom: 25px;
-        }
-        .chip-group-legend { 
-            font-weight: 600; 
-            padding: 0;
-            color: var(--color-text-legend);
-            margin-bottom: 12px; 
-            font-size: var(--font-size-legend); 
-            display: block; 
-        }
-        .chip-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px; 
-        }
-        .chip-label {
-            display: inline-block;
-            padding: 7px 14px; 
-            background-color: var(--bg-chip-default); 
-            color: var(--color-text-chip-default);
-            border-radius: 18px; 
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
-            font-size: var(--font-size-chip);
-            border: 1px solid var(--border-color-light); 
-            font-family: var(--font-family-chip);
-        }
-        .chip-label:hover {
-            background-color: var(--user-warm-grey-2); 
-            transform: translateY(-1px);
-        }
-        .chip-checkbox { 
-            opacity: 0;
-            position: absolute;
-            width: 0;
-            height: 0;
-        }
-        .chip-checkbox:checked + .chip-label {
-            background-color: var(--bg-chip-selected); 
-            color: var(--color-text-chip-selected); 
-            border-color: var(--border-color-chip-selected); 
-            font-weight: 500;
-        }
-        .chip-checkbox:focus + .chip-label { 
-            outline: 2px solid var(--border-color-focus); 
-            outline-offset: 2px; 
-        }
-        
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 12px; 
-            border: 1px solid var(--border-color-input);
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-family: var(--font-family-main);
-            font-size: var(--font-size-input); 
-            background-color: var(--bg-input);
-            color: var(--color-text-default);
-        }
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        select:focus,
-        textarea:focus {
-            border-color: var(--border-color-focus);
-            box-shadow: var(--box-shadow-focus);
-        }
-
-        .slider-container {
-            margin-bottom: 25px; 
-        }
-        .slider-container label {
-            margin-bottom: 10px; 
-            font-size: var(--font-size-label);
-        }
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: calc(100% - 75px); 
-            height: 10px; 
-            background: linear-gradient(to right, var(--bg-slider-track-start) 0%, var(--bg-slider-track-end) 100%); 
-            border-radius: 5px;
-            outline: none;
-            opacity: 0.85; 
-            transition: opacity .15s ease-in-out;
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 5px 0 0;
-        }
-        input[type="range"]:hover {
-            opacity: 1;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px; 
-            height: 24px; 
-            background: var(--bg-slider-thumb); 
-            border-radius: 50%;
-            border: 3px solid white; 
-            cursor: pointer;
-            margin-top: -7px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3); 
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 22px; 
-            height: 22px; 
-            background: var(--bg-slider-thumb);
-            border-radius: 50%;
-            border: 3px solid white;
-            cursor: pointer;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-        
-        input[type="range"]::-moz-range-track {
-            width: 100%;
-            height: 10px; 
-            background: linear-gradient(to right, var(--bg-slider-track-start) 0%, var(--bg-slider-track-end) 100%); 
-            border-radius: 5px;
-            border: none;
-        }
-        input[type="range"]::-moz-range-progress {
-            background-color: transparent; 
-        }
-        input[type="range"]::-moz-range-progress:empty {
-            background-color: transparent;
-        }
-
-        .slider-value { 
-            display: inline-flex; 
-            align-items: center;
-            justify-content: center;
-            width: 32px;  
-            height: 32px; 
-            text-align: center;
-            font-weight: bold;
-            vertical-align: middle;
-            margin-left: 10px;
-            background-color: var(--bg-slider-value); 
-            color: var(--color-text-slider-value); 
-            border-radius: 50%; 
-            font-size: var(--font-size-slider-value);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        button[type="submit"] {
-            background-color: var(--bg-button-submit);
-            color: var(--color-text-button);
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: var(--font-size-button);
-            font-weight: 600; 
-            transition: background-color 0.2s;
-            display: block;
-            width: 100%;
-            margin-top: 20px; 
-        }
-        button[type="submit"]:hover {
-            background-color: var(--bg-button-submit-hover);
-        }
-        button[type="submit"]:disabled {
-            background-color: var(--bg-button-disabled);
-        }
-        #form-feedback {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            text-align: center;
-        }
-        #form-feedback.success {
-            background-color: var(--bg-feedback-success);
-            color: var(--color-text-feedback-success);
-            border: 1px solid var(--border-feedback-success);
-        }
-        #form-feedback.error {
-            background-color: var(--bg-feedback-error);
-            color: var(--color-text-feedback-error);
-            border: 1px solid var(--border-feedback-error);
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
 </head>
 <body>
     <div class="container">
-        <h1>Palaute työhakemuksesta</h1>
-        <p id="application-info" style="text-align:center; margin-bottom: 20px; font-style: italic;"></p>
+        <h1>Palaute työhakemuksestani</h1>
 
-        <form id="employerFeedbackForm">
-            <input type="hidden" id="application_id_fk" name="application_id_fk">
-            <input type="hidden" id="job_id_fk" name="job_id_fk">
+    <p id="application-info" style="text-align:center; margin-bottom: 20px; font-style: italic;"></p>
 
-            <h2>1. Yleisarviointi hakemuksesta</h2>
+    <p>Kiitos, että annoitte aikaanne hakemukseni käsittelyyn <span id="job-title-placeholder-hakemus">[Tehtävänimike tähän]</span> -tehtävään. Vaikka tällä kertaa en tullut valituksi, hakemukseen liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää hakemuksiani tulevaisuudessa. Kiitos paljon avustanne!</p>
+
+    <form id="applicationFeedbackForm">
+        <input type="hidden" id="application_id_fk_hakemus" name="application_id_fk">
+        <input type="hidden" id="job_id_fk_hakemus" name="job_id_fk">
+        <h2>1. Yleisarvio hakemuksesta</h2>
             <div class="slider-container">
-                <label for="yleisarvosana_arvio">Yleisarvosana hakemukselle (1=heikko, 5=erinomainen):</label>
+                <label for="yleisarvosana_arvio">Antaisitteko yleisarvosanan hakemukselleni kokonaisuutena? (1 = kaipaa paljon kehitystä, 5 = erinomainen):</label>
                 <input type="range" id="yleisarvosana_arvio" name="yleisarvosana_arvio" min="1" max="5" step="1" defaultValue="3" oninput="this.nextElementSibling.value = this.value" required>
                 <output class="slider-value">3</output>
             </div>
 
             <h2>2. Hakemusta kuvaavat määreet</h2>
             <div class="chip-group-container">
-                <div class="chip-group-legend">Valitse hakemusta parhaiten kuvaavat määreet (voit valita useamman):</div>
                 <div class="chip-group">
-                    <input type="checkbox" class="chip-checkbox" id="maare_selkea" name="maatreet_valitut" value="Selkeä"><label class="chip-label" for="maare_selkea">Selkeä / Hyvin jäsennelty</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_kohdennettu" name="maatreet_valitut" value="Kohdennettu"><label class="chip-label" for="maare_kohdennettu">Kohdennettu tehtävään</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_vaikuttava" name="maatreet_valitut" value="Vaikuttava"><label class="chip-label" for="maare_vaikuttava">Vaikuttava / Mielenkiintoinen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_persoonallinen" name="maatreet_valitut" value="Persoonallinen"><label class="chip-label" for="maare_persoonallinen">Persoonallinen / Erottuva</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_yleisluontoinen" name="maatreet_valitut" value="Yleisluontoinen"><label class="chip-label" for="maare_yleisluontoinen">Yleisluontoinen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_puutteellinen" name="maatreet_valitut" value="Puutteellinen"><label class="chip-label" for="maare_puutteellinen">Puutteellinen / Epäselvä</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_oikeakielinen" name="maatreet_valitut" value="Oikeakielinen"><label class="chip-label" for="maare_oikeakielinen">Oikeakielinen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_asiantunteva" name="maatreet_valitut" value="Asiantunteva"><label class="chip-label" for="maare_asiantunteva">Asiantunteva vaikutelma</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_huolellinen" name="maatreet_valitut" value="Huolellinen"><label class="chip-label" for="maare_huolellinen">Huolellinen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_ammattimainen" name="maatreet_valitut" value="Ammattimainen"><label class="chip-label" for="maare_ammattimainen">Ammattimainen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_vakuuttava" name="maatreet_valitut" value="Vakuuttava"><label class="chip-label" for="maare_vakuuttava">Vakuuttava</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_innovatiivinen" name="maatreet_valitut" value="Innovatiivinen"><label class="chip-label" for="maare_innovatiivinen">Innovatiivinen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_analyyttinen" name="maatreet_valitut" value="Analyyttinen"><label class="chip-label" for="maare_analyyttinen">Analyyttinen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_ratkaisukeskeinen" name="maatreet_valitut" value="Ratkaisukeskeinen"><label class="chip-label" for="maare_ratkaisukeskeinen">Ratkaisukeskeinen</label>
-                    <input type="checkbox" class="chip-checkbox" id="maare_positiivinen" name="maatreet_valitut" value="Positiivinen"><label class="chip-label" for="maare_positiivinen">Positiivinen yleisvaikutelma</label>
-                </div>
+    <input type="checkbox" class="chip-checkbox" id="maare_selkea_split" name="maatreet_valitut" value="Selkeä"><label class="chip-label" for="maare_selkea_split">Selkeä</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_hyvin_jasennelty" name="maatreet_valitut" value="Hyvin jäsennelty"><label class="chip-label" for="maare_hyvin_jasennelty">Hyvin jäsennelty</label>
+
+    <input type="checkbox" class="chip-checkbox" id="maare_kohdennettu" name="maatreet_valitut" value="Kohdennettu"><label class="chip-label" for="maare_kohdennettu">Kohdennettu työtehtävään</label> <input type="checkbox" class="chip-checkbox" id="maare_vaikuttava_split" name="maatreet_valitut" value="Vaikuttava"><label class="chip-label" for="maare_vaikuttava_split">Vaikuttava</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_mielenkiintoinen" name="maatreet_valitut" value="Mielenkiintoinen"><label class="chip-label" for="maare_mielenkiintoinen">Mielenkiintoinen</label>
+
+    <input type="checkbox" class="chip-checkbox" id="maare_persoonallinen_split" name="maatreet_valitut" value="Persoonallinen"><label class="chip-label" for="maare_persoonallinen_split">Persoonallinen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_erottuva" name="maatreet_valitut" value="Erottuva"><label class="chip-label" for="maare_erottuva">Erottuva</label>
+
+    <input type="checkbox" class="chip-checkbox" id="maare_yleisluontoinen" name="maatreet_valitut" value="Yleisluontoinen"><label class="chip-label" for="maare_yleisluontoinen">Yleisluontoinen</label>
+
+    <input type="checkbox" class="chip-checkbox" id="maare_puutteellinen_split" name="maatreet_valitut" value="Puutteellinen"><label class="chip-label" for="maare_puutteellinen_split">Puutteellinen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_epaselva" name="maatreet_valitut" value="Epäselvä"><label class="chip-label" for="maare_epaselva">Epäselvä</label>
+
+    <input type="checkbox" class="chip-checkbox" id="maare_oikeakielinen" name="maatreet_valitut" value="Oikeakielinen"><label class="chip-label" for="maare_oikeakielinen">Oikeakielinen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_asiantunteva" name="maatreet_valitut" value="Asiantunteva"><label class="chip-label" for="maare_asiantunteva">Asiantunteva vaikutelma</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_huolellinen" name="maatreet_valitut" value="Huolellinen"><label class="chip-label" for="maare_huolellinen">Huolellinen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_ammattimainen" name="maatreet_valitut" value="Ammattimainen"><label class="chip-label" for="maare_ammattimainen">Ammattimainen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_vakuuttava" name="maatreet_valitut" value="Vakuuttava"><label class="chip-label" for="maare_vakuuttava">Vakuuttava</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_innovatiivinen" name="maatreet_valitut" value="Innovatiivinen"><label class="chip-label" for="maare_innovatiivinen">Innovatiivinen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_analyyttinen" name="maatreet_valitut" value="Analyyttinen"><label class="chip-label" for="maare_analyyttinen">Analyyttinen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_ratkaisukeskeinen" name="maatreet_valitut" value="Ratkaisukeskeinen"><label class="chip-label" for="maare_ratkaisukeskeinen">Ratkaisukeskeinen</label>
+    <input type="checkbox" class="chip-checkbox" id="maare_positiivinen" name="maatreet_valitut" value="Positiivinen"><label class="chip-label" for="maare_positiivinen">Positiivinen yleisvaikutelma</label>
+</div>
             </div>
 
-            <h2>3. Osa-alueiden arviointi (hakemuksen perusteella, 1-5)</h2>
+            <h2>3. Arvio hakemuksen eri osa-alueista</h2>
+
             <div class="slider-container">
-                <label for="motivaatio_arvio">Motivaatio:</label>
+                <label for="motivaatio_arvio">Miten hyvin koitte motivaationi ja kiinnostukseni ilmenevän hakemuksesta? (Arvio 1–5):</label>
                 <input type="range" id="motivaatio_arvio" name="motivaatio_arvio" min="1" max="5" step="1" defaultValue="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
             <div class="slider-container">
-                <label for="koulutus_arvio">Koulutus:</label>
+                <label for="koulutus_arvio">Miten arvioitte koulutukseni vastaavan haettuun työtehtävään? (Arvio 1–5):</label>
                 <input type="range" id="koulutus_arvio" name="koulutus_arvio" min="1" max="5" step="1" defaultValue="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
             <div class="slider-container">
-                <label for="kokemus_arvio">Työkokemus:</label>
+                <label for="kokemus_arvio">Miten arvioitte työkokemukseni soveltuvuutta haettuun työtehtävään? (Arvio 1–5):</label>
                 <input type="range" id="kokemus_arvio" name="kokemus_arvio" min="1" max="5" step="1" defaultValue="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
             <div class="slider-container">
-                <label for="tietotekniset_taidot_arvio">Tietotekniset taidot:</label>
+                <label for="tietotekniset_taidot_arvio">Miten arvioitte tietoteknisiä taitojani hakemuksen perusteella? (Arvio 1–5):</label>
                 <input type="range" id="tietotekniset_taidot_arvio" name="tietotekniset_taidot_arvio" min="1" max="5" step="1" defaultValue="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
             <div class="slider-container">
-                <label for="vastaavuus_kokonaisuus_arvio">Vastaavuus rooliin (kokonaisuus):</label>
+                <label for="vastaavuus_kokonaisuus_arvio">Miten hakemukseni kokonaisuutena vastasi mielestänne haettua työtehtävää? (Arvio 1–5):</label>
                 <input type="range" id="vastaavuus_kokonaisuus_arvio" name="vastaavuus_kokonaisuus_arvio" min="1" max="5" step="1" defaultValue="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
             <div class="slider-container">
-                <label for="osaaminen_arvio">Ammatillinen osaaminen (yleisesti hakemuksen perusteella):</label>
+                <label for="osaaminen_arvio">Miten ammatillinen osaamiseni tuli esille hakemuksessa? (Arvio 1–5):</label>
                 <input type="range" id="osaaminen_arvio" name="osaaminen_arvio" min="1" max="5" step="1" defaultValue="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
-            
-            <h2>4. Muut huomiot</h2>
+
+            <h2>4. Vapaamuotoiset huomiot ja kehitysvinkit hakemukseen liittyen</h2>
+             <p class="section-description">Tässä on tilaa kaikille muille vapaamuotoisille huomioille hakemuksestani sekä erityisesti vinkeille, miten voisin kehittää hakemuksiani paremmiksi tulevaisuudessa.</p>
             <div>
-                <label for="arviointi_lisatietoa_muuta">Yleiset lisätiedot / Muut huomiot hakemuksesta:</label>
+                <label for="arviointi_lisatietoa_muuta">Vapaamuotoinen palaute ja vinkit hakemukseeni liittyen:</label>
                 <textarea id="arviointi_lisatietoa_muuta" name="arviointi_lisatietoa_muuta" rows="5"></textarea>
             </div>
 
-            <button type="submit" id="submitButton">Lähetä palaute</button>
+               <button type="submit" id="submitButton">Lähetä palaute</button>
             <div id="form-feedback"></div>
-        </form>
+    </form>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => { // KÄÄRITTY KOKO SKRIPTI
             const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co'; 
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
+            const SUPABASE_ANON_KEY = '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
 
             if (typeof supabase === 'undefined' || typeof supabase.createClient !== 'function') {
                 console.error('Supabase client (supabase.createClient) ei ole ladattu tai se ei ole funktio.');
