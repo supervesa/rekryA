@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palaute työhaastattelustani</title>
-    <link rel="stylesheet" href="tyylit.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-</head>
+    <link rel="stylesheet" href="tyylit.css"> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    </head>
 <body>
     <div class="container">
         <h1>Palaute työhaastattelustani</h1>
@@ -117,6 +115,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded. Aloitetaan parametrien luku.'); // DEBUG
+
             const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ';
 
@@ -134,10 +134,165 @@
             const form = document.getElementById('interviewFeedbackForm');
             const feedbackDiv = document.getElementById('form-feedback');
             const submitButton = document.getElementById('submitButton');
-            const applicationInfoDiv = document.getElementById('application-info'); // Tämä löytyy nyt HTML:stä
-
-            // Haetaan piilotetut kentät
+            const applicationInfoDiv = document.getElementById('application-info');
             const appIdHiddenField = document.getElementById('application_id_fk');
             const jobIdHiddenField = document.getElementById('job_id_fk');
 
-            const
+            // --- URL Parametrien luku ---
+            const urlParams = new URLSearchParams(window.location.search);
+            console.log('Koko URL:n hakuparametrit (window.location.search):', window.location.search); // DEBUG
+
+            const applicationIdFk = urlParams.get('appId');
+            console.log('Luettu "appId" URL:sta:', applicationIdFk); // DEBUG
+            console.log('Luetun "appId":n tyyppi:', typeof applicationIdFk); // DEBUG
+
+            const jobIdFk = urlParams.get('jobId');
+            console.log('Luettu "jobId" URL:sta:', jobIdFk); // DEBUG
+
+            const applicantName = urlParams.get('applicantName');
+            console.log('Luettu "applicantName" URL:sta:', applicantName ? decodeURIComponent(applicantName) : null); // DEBUG
+
+            const jobTitle = urlParams.get('jobTitle');
+            console.log('Luettu "jobTitle" URL:sta:', jobTitle ? decodeURIComponent(jobTitle) : null); // DEBUG
+            // --- Parametrien luku päättyy ---
+
+            if (applicationIdFk) { // Tässä tarkistetaan, onko applicationIdFk "truthy"
+                console.log('applicationIdFk ON "truthy". Arvo:', applicationIdFk); // DEBUG
+                if (appIdHiddenField) {
+                    appIdHiddenField.value = applicationIdFk;
+                }
+                if (applicationInfoDiv) {
+                    if (applicantName && jobTitle) {
+                        applicationInfoDiv.textContent = `Palaute hakijan "${decodeURIComponent(applicantName)}" haastattelusta työpaikkaan "${decodeURIComponent(jobTitle)}" (Hakemus ID: ${applicationIdFk})`;
+                    } else if (jobTitle) {
+                        applicationInfoDiv.textContent = `Palaute haastattelusta työpaikkaan: ${decodeURIComponent(jobTitle)} (Hakemus ID: ${applicationIdFk})`;
+                    } else {
+                        applicationInfoDiv.textContent = `Palaute haastattelusta hakemukselle ID: ${applicationIdFk}`;
+                    }
+                }
+            } else {
+                console.warn('applicationIdFk EI OLE "truthy". Arvo:', applicationIdFk, 'Näytetään virheilmoitus.'); // DEBUG
+                if (feedbackDiv) {
+                    feedbackDiv.textContent = 'Virhe: Hakemuksen ID (appId) puuttuu URL-parametreista.';
+                    feedbackDiv.className = 'error';
+                }
+                if (submitButton) {
+                    submitButton.disabled = true;
+                    console.log('Lähetyspainike poistettu käytöstä, koska appId puuttuu.'); //DEBUG
+                }
+            }
+
+            if (jobIdFk) {
+                console.log('jobIdFk ON "truthy". Arvo:', jobIdFk); // DEBUG
+                if (jobIdHiddenField) {
+                    jobIdHiddenField.value = jobIdFk;
+                }
+            } else {
+                console.log('jobIdFk EI OLE "truthy" tai puuttuu. Arvo:', jobIdFk); // DEBUG
+            }
+
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
+                if (slider.nextElementSibling && slider.nextElementSibling.tagName === 'OUTPUT') {
+                    slider.nextElementSibling.value = slider.value;
+                }
+            });
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                console.log('Lomakkeen lähetys aloitettu.'); // DEBUG
+                if (submitButton) submitButton.disabled = true;
+                if (feedbackDiv) {
+                    feedbackDiv.textContent = 'Lähetetään...';
+                    feedbackDiv.className = '';
+                }
+
+                const formData = new FormData(form);
+                const formProps = Object.fromEntries(formData);
+                console.log('Lomakkeen tiedot (formProps):', JSON.stringify(formProps)); // DEBUG
+
+
+                const esiintymisluonneValinnat = [];
+                form.querySelectorAll('input[name="q2_esiintymisluonne_valinnat"]:checked').forEach((checkbox) => {
+                    esiintymisluonneValinnat.push(checkbox.value);
+                });
+
+                const getIntOrNull = (value) => {
+                    if (value === null || value === undefined || String(value).trim() === '') {
+                        return null;
+                    }
+                    const parsed = parseInt(String(value).trim(), 10);
+                    return isNaN(parsed) ? null : parsed;
+                };
+                
+                // Varmistetaan, että application_id_fk ja job_id_fk ovat mukana ja oikein
+                const finalApplicationIdFk = appIdHiddenField ? appIdHiddenField.value : null;
+                const finalJobIdFk = jobIdHiddenField ? jobIdHiddenField.value : null;
+
+                console.log('Arvo piilotetusta kentästä application_id_fk ennen lähetystä:', finalApplicationIdFk); // DEBUG
+                console.log('Arvo piilotetusta kentästä job_id_fk ennen lähetystä:', finalJobIdFk); // DEBUG
+
+
+                const dataToSubmit = {
+                    application_id_fk: finalApplicationIdFk || null,
+                    job_id_fk: finalJobIdFk || null,
+                    q1_ammattitaito_yhteensopivuus: getIntOrNull(formProps.q1_ammattitaito_yhteensopivuus),
+                    q4_osaamisen_tasmaaminen: getIntOrNull(formProps.q4_osaamisen_tasmaaminen),
+                    q6_hakemuksen_todellisuuden_yhteensopivuus: getIntOrNull(formProps.q6_hakemuksen_todellisuuden_yhteensopivuus),
+                    q2_esiintymisluonne_valinnat: esiintymisluonneValinnat.length > 0 ? esiintymisluonneValinnat : null,
+                    q3_vastausten_selkeys_asiantuntemus: getIntOrNull(formProps.q3_vastausten_selkeys_asiantuntemus),
+                    q5_vahvuuksien_korostaminen_arvio: getIntOrNull(formProps.q5_vahvuuksien_korostaminen_arvio),
+                    q8_reagointi_haastaviin_tilanteisiin_arvio: getIntOrNull(formProps.q8_reagointi_haastaviin_tilanteisiin_arvio),
+                    q9_oma_aloitteisuus_arvio: getIntOrNull(formProps.q9_oma_aloitteisuus_arvio),
+                    q7_motivaatio_tehtavaan_yritykseen_arvio: getIntOrNull(formProps.q7_motivaatio_tehtavaan_yritykseen_arvio),
+                    q11_adaptiivisuus_muutoksiin_arvio: getIntOrNull(formProps.q11_adaptiivisuus_muutoksiin_arvio),
+                    q10_kasvupotentiaali_arvio: getIntOrNull(formProps.q10_kasvupotentiaali_arvio),
+                    lisatietoa_muuta: formProps.lisatietoa_muuta || null
+                };
+
+                console.log("Lähetetään Supabaseen (haastattelupalaute):", JSON.stringify(dataToSubmit)); // DEBUG
+
+                const { data, error } = await supabaseClient
+                    .from('haastattelut')
+                    .insert([dataToSubmit])
+                    .select();
+
+                if (error) {
+                    console.error('Virhe tallennettaessa Supabaseen:', error);
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = `Virhe: ${error.message}`;
+                        feedbackDiv.className = 'error';
+                    }
+                    if (submitButton) submitButton.disabled = false;
+                } else {
+                    console.log('Tallennettu data:', data);
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Haastattelupalaute tallennettu onnistuneesti! Kiitos.';
+                        feedbackDiv.className = 'success';
+                        form.reset();
+                        document.querySelectorAll('input[type="range"]').forEach(slider => {
+                           if (slider.nextElementSibling && slider.nextElementSibling.tagName === 'OUTPUT') {
+                               slider.nextElementSibling.value = slider.defaultValue || '3';
+                           }
+                        });
+                        if (submitButton) submitButton.disabled = true;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+```
+
+**Ohjeet:**
+
+1.  **Korvaa** `haastattelupalaute.html`-tiedostosi sisältö yllä olevalla koodilla.
+2.  **Avaa sivu selaimessa käyttäen sitä linkkiä, jonka jaoit:** `https://supervesa.github.io/rekryA/haastattelupalaute.html?appId=app_kk091&jobId=242424&applicantName=app_kk091`
+3.  **Avaa selaimen kehittäjän konsoli** (yleensä F12-näppäin, etsi "Konsoli" tai "Console"-välilehti).
+4.  **Tarkastele konsolin tulosteita.** Etsi erityisesti rivejä, jotka alkavat:
+    * `Koko URL:n hakuparametrit...`
+    * `Luettu "appId" URL:sta:`
+    * `Luetun "appId":n tyyppi:`
+    * `applicationIdFk ON "truthy". Arvo:` TAI `applicationIdFk EI OLE "truthy". Arvo:`
+
+Nämä lokitiedot kertovat meille tarkasti, mitä arvoa `applicationIdFk`-muuttuja saa ja miksi koodi mahdollisesti päätyy näyttämään virheilmoituksen. Jaa konsolin tulosteet tänne, niin voimme jatkaa ongelman selvittämis
