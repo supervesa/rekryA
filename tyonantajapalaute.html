@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Työnantajapalaute</title> <link rel="stylesheet" href="tyylit.css">
+    <title>Palaute työhakemuksestani</title> <link rel="stylesheet" href="tyylit.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
@@ -12,9 +12,7 @@
     <div class="container">
         <h1>Palaute työhakemuksestani</h1>
 
-    <p id="application-info" style="text-align:center; margin-bottom: 20px; font-style: italic;"></p>
-
-    <p>Kiitos, että annoitte aikaanne hakemukseni käsittelyyn <span id="job-title-placeholder-hakemus">[Tehtävänimike tähän]</span> -tehtävään. Vaikka tällä kertaa en tullut valituksi, hakemukseen liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää hakemuksiani tulevaisuudessa. Kiitos paljon avustanne!</p>
+    <p>Kiitos, että annoitte aikaanne hakemukseni käsittelyyn hakemaani tehtävään. Vaikka tällä kertaa en tullut valituksi, hakemukseen liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää hakemuksiani tulevaisuudessa. Kiitos paljon avustanne!</p>
 
     <form id="applicationFeedbackForm">
         <input type="hidden" id="application_id_fk_hakemus" name="application_id_fk">
@@ -103,7 +101,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => { // KÄÄRITTY KOKO SKRIPTI
             const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co'; 
-            const SUPABASE_ANON_KEY = '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
+            const SUPABASE_ANON_KEY = '.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
 
             if (typeof supabase === 'undefined' || typeof supabase.createClient !== 'function') {
                 console.error('Supabase client (supabase.createClient) ei ole ladattu tai se ei ole funktio.');

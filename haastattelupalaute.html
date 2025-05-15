@@ -11,9 +11,8 @@
 <body>
     <div class="container">
         <h1>Palaute työhaastattelustani</h1>
-        <p id="application-info"></p>
 
-        <p>Kiitos vielä kerran mahdollisuudesta haastatteluun <span id="job-title-placeholder-interview">[Tehtävänimike tähän]</span> -tehtävään. Vaikka tällä kertaa en tullut valituksi, haastatteluun liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää esiintymistäni ja kommunikaatiotani haastattelutilanteissa tulevaisuudessa. Kiitos paljon avustanne!</p>
+        <p>Kiitos vielä kerran mahdollisuudesta haastatteluun hakemaani tehtävään. Vaikka tällä kertaa en tullut valituksi, haastatteluun liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää esiintymistäni ja kommunikaatiotani haastattelutilanteissa tulevaisuudessa. Kiitos paljon avustanne!</p>
 
         <form id="interviewFeedbackForm">
            
@@ -114,8 +113,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => { 
-            const SUPABASE_URL = 'https://.supabase.co'; 
-            const SUPABASE_ANON_KEY = '.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
+            const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co'; 
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ'; 
 
             if (typeof supabase === 'undefined' || typeof supabase.createClient !== 'function') {
                 console.error('Supabase client (supabase.createClient) ei ole ladattu tai se ei ole funktio.');
@@ -132,7 +131,6 @@
             const feedbackDiv = document.getElementById('form-feedback');
             const submitButton = document.getElementById('submitButton');
             const applicationInfoDiv = document.getElementById('application-info');
-            const jobTitlePlaceholder = document.getElementById('job-title-placeholder-interview');
 
             const urlParams = new URLSearchParams(window.location.search);
             const applicationIdFk = urlParams.get('appId');
