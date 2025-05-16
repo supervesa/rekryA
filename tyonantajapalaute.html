@@ -10,10 +10,10 @@
 <body>
     <div class="container">
         <div class="applicant-name-header">Vesa Nessling</div>
-        <div id="employer-job-info"></div> <div id="application-info"></div>
+     
 
         <h1>Palaute työhakemuksestani</h1>
-
+   <div id="employer-job-info"></div> 
         <p id="intro-paragraph">Kiitos, että annoitte aikaanne hakemukseni käsittelyyn hakemaani [työnimike] -tehtävään. Vaikka tällä kertaa en tullut valituksi, hakemukseen liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää hakemuksiani tulevaisuudessa. Kiitos paljon avustanne!</p>
 
         <form id="applicationFeedbackForm">
@@ -96,6 +96,7 @@
                <button type="submit" id="submitButton">Lähetä palaute</button>
             <div id="form-feedback"></div>
     </form>
+    <div id="application-info"></div>
     </div>
 
     <script>
@@ -143,13 +144,15 @@
                 employerJobInfoDiv.textContent = employerJobText;
             }
             
-            if (introParagraph) {
-                let currentText = introParagraph.innerHTML;
+       if (introParagraph) {
+                let currentText = introParagraph.innerHTML; 
                 if (jobTitle) {
-                    currentText = currentText.replace('[työnimike]', `"${decodeURIComponent(jobTitle)}"`);
+                    // Muuta työnimike pieniksi kirjaimiksi ja poista lainausmerkit
+                    const formattedJobTitle = decodeURIComponent(jobTitle).toLowerCase();
+                    currentText = currentText.replace('[työnimike]', formattedJobTitle);
                 } else {
-                    // Jos työnimikettä ei ole, poistetaan paikkamerkki ja sitä ympäröivä osa lauseesta siistimmin
-                    currentText = currentText.replace('hakemaani [työnimike] -tehtävään', 'hakemaani tehtävään');
+                    // Jos työnimikettä ei ole, korvataan paikkamerkki ja sitä ympäröivä teksti
+                    currentText = currentText.replace('[työnimike] -työtehtävästä', 'avoinna olevasta paikasta');
                 }
                 introParagraph.innerHTML = currentText;
             }

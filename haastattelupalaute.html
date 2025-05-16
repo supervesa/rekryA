@@ -10,9 +10,10 @@
     <div class="container">
         <div class="applicant-name-header">Vesa Nessling</div>
         <div id="employer-job-info"></div> 
-        <div id="application-info"></div>
+      
 
         <h1>Palaute työhaastattelustani</h1>
+                <div id="employer-job-info"></div> 
 
         <p id="intro-paragraph">Kiitos mahdollisuudesta päästä kertomaan itsestäni ja osaamisestani sekä kuulemaan [työnimike] -työtehtävästä. Vaikka tällä kertaa en tullut valituksi, haastatteluun liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää esiintymistäni ja vuorovaikutustani haastattelutilanteissa tulevaisuudessa. Kiitos paljon avustanne!</p>
 
@@ -112,6 +113,7 @@
             <button type="submit" id="submitButton">Lähetä haastattelupalaute</button>
             <div id="form-feedback"></div>
         </form>
+          <div id="application-info"></div>
     </div>
 
     <script>
@@ -158,11 +160,14 @@
                 employerJobInfoDiv.textContent = employerJobText;
             }
 
-            if (introParagraph) {
+           if (introParagraph) {
                 let currentText = introParagraph.innerHTML; 
                 if (jobTitle) {
-                    currentText = currentText.replace('[työnimike]', `"${decodeURIComponent(jobTitle)}"`);
+                    // Muuta työnimike pieniksi kirjaimiksi ja poista lainausmerkit
+                    const formattedJobTitle = decodeURIComponent(jobTitle).toLowerCase();
+                    currentText = currentText.replace('[työnimike]', formattedJobTitle);
                 } else {
+                    // Jos työnimikettä ei ole, korvataan paikkamerkki ja sitä ympäröivä teksti
                     currentText = currentText.replace('[työnimike] -työtehtävästä', 'avoinna olevasta paikasta');
                 }
                 introParagraph.innerHTML = currentText;
