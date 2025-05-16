@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Palaute työhakemuksestani</title>
     <link rel="stylesheet" href="tyylit.css"> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+  
 </head>
 <body>
     <div class="container">
+        <div class="applicant-name-header">Vesa Nessling</div>
+        <div id="employer-job-info"></div> <div id="application-info"></div>
 
         <h1>Palaute työhakemuksestani</h1>
 
-        <p>Kiitos, että annoitte aikaanne hakemukseni käsittelyyn hakemaani tehtävään. Vaikka tällä kertaa en tullut valituksi, hakemukseen liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää hakemuksiani tulevaisuudessa. Kiitos paljon avustanne!</p>
+        <p id="intro-paragraph">Kiitos, että annoitte aikaanne hakemukseni käsittelyyn hakemaani [työnimike] -tehtävään. Vaikka tällä kertaa en tullut valituksi, hakemukseen liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää hakemuksiani tulevaisuudessa. Kiitos paljon avustanne!</p>
 
         <form id="applicationFeedbackForm">
             <input type="hidden" id="application_id_fk" name="application_id_fk">
@@ -87,21 +89,18 @@
             <h2>4. Vapaamuotoiset huomiot ja kehitysvinkit hakemukseen liittyen</h2>
              <p class="section-description">Tässä on tilaa kaikille muille vapaamuotoisille huomioille hakemuksestani sekä erityisesti vinkeille, miten voisin kehittää hakemuksiani paremmiksi tulevaisuudessa.</p>
             <div>
-                <label for="arviointi_lisatietoa_muuta">Vapaamuotoinen palaute ja vinkit hakemukseeni liittyen:</label>
+                <label for="arviointi_lisatietoa_muuta">Vapaamuotoinen palaute ja vinkit hakemukseeni liittyen</label>
                 <textarea id="arviointi_lisatietoa_muuta" name="arviointi_lisatietoa_muuta" rows="5"></textarea>
             </div>
 
                <button type="submit" id="submitButton">Lähetä palaute</button>
             <div id="form-feedback"></div>
     </form>
-      <div class="applicant-name-header">Vesa Nessling</div>
-        <div id="application-info"></div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const SUPABASE_URL = 'https://kistxgsnxvfftgshbpax.supabase.co';
-            // Korjattu ANON_KEY (poistettu ylimääräinen osa)
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpc3R4Z3NueHZmZnRnc2hicGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY4MjQxOTcsImV4cCI6MjA2MjQwMDE5N30.OGcxcwVAX8R925Eq7Vr5vWbtHLqPl_OQBF39R_6nTqQ';
 
             if (typeof supabase === 'undefined' || typeof supabase.createClient !== 'function') {
@@ -115,12 +114,14 @@
             }
             
             const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            const form = document.getElementById('applicationFeedbackForm'); // Oikea form ID
+            const form = document.getElementById('applicationFeedbackForm');
             const feedbackDiv = document.getElementById('form-feedback');
             const submitButton = document.getElementById('submitButton');
-            const applicationInfoDiv = document.getElementById('application-info'); // Lisätty viittaus
-            const appIdHiddenField = document.getElementById('application_id_fk'); // Yhdenmukaistettu ID
-            const jobIdHiddenField = document.getElementById('job_id_fk'); // Yhdenmukaistettu ID
+            const applicationInfoDiv = document.getElementById('application-info');
+            const employerJobInfoDiv = document.getElementById('employer-job-info'); 
+            const introParagraph = document.getElementById('intro-paragraph'); 
+            const appIdHiddenField = document.getElementById('application_id_fk');
+            const jobIdHiddenField = document.getElementById('job_id_fk');
 
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -128,13 +129,38 @@
             const jobIdFk = urlParams.get('jobId');
             const applicantName = urlParams.get('applicantName');
             const jobTitle = urlParams.get('jobTitle');
+            const employerName = urlParams.get('employerName'); 
+
+            if (employerJobInfoDiv) {
+                let employerJobText = '';
+                if (employerName && jobTitle) {
+                    employerJobText = `${decodeURIComponent(employerName)} - ${decodeURIComponent(jobTitle)}`;
+                } else if (jobTitle) {
+                    employerJobText = decodeURIComponent(jobTitle);
+                } else if (employerName) {
+                    employerJobText = decodeURIComponent(employerName);
+                }
+                employerJobInfoDiv.textContent = employerJobText;
+            }
+            
+            if (introParagraph) {
+                let currentText = introParagraph.innerHTML;
+                if (jobTitle) {
+                    currentText = currentText.replace('[työnimike]', `"${decodeURIComponent(jobTitle)}"`);
+                } else {
+                    // Jos työnimikettä ei ole, poistetaan paikkamerkki ja sitä ympäröivä osa lauseesta siistimmin
+                    currentText = currentText.replace('hakemaani [työnimike] -tehtävään', 'hakemaani tehtävään');
+                }
+                introParagraph.innerHTML = currentText;
+            }
+
 
             if (applicationIdFk) {
-                if (appIdHiddenField) { // Tarkistus ennen arvon asettamista
+                if (appIdHiddenField) {
                     appIdHiddenField.value = applicationIdFk;
                 }
-                if (applicationInfoDiv) { // Tarkistus ennen tekstin asettamista
-                    let infoText = `Palaute hakemukselle ID: ${applicationIdFk}`; // Oletusteksti
+                if (applicationInfoDiv) {
+                    let infoText = `Palaute hakemukselle ID: ${applicationIdFk}`;
                     if (applicantName && jobTitle) {
                         infoText = `Palaute hakemukselle: ${decodeURIComponent(applicantName)} - ${decodeURIComponent(jobTitle)} (ID: ${applicationIdFk})`;
                     } else if (jobTitle) {
@@ -153,14 +179,14 @@
             }
 
             if (jobIdFk) {
-                 if (jobIdHiddenField) { // Tarkistus ennen arvon asettamista
+                 if (jobIdHiddenField) {
                     jobIdHiddenField.value = jobIdFk;
                 }
             }
             
             document.querySelectorAll('input[type="range"]').forEach(slider => {
                 if (slider.nextElementSibling && slider.nextElementSibling.tagName === 'OUTPUT') {
-                    slider.nextElementSibling.value = slider.value; // Käytä value, ei defaultValue
+                    slider.nextElementSibling.value = slider.value;
                 }
             });
 
@@ -180,7 +206,7 @@
                     maatreetValitut.push(checkbox.value);
                 });
 
-                const getIntOrNull = (value) => { // Apufunktio
+                const getIntOrNull = (value) => {
                     if (value === null || value === undefined || String(value).trim() === '') {
                         return null;
                     }
@@ -189,8 +215,8 @@
                 };
 
                 const dataToSubmit = {
-                    application_id_fk: formProps.application_id_fk, // Tulee piilotetusta kentästä
-                    job_id_fk: formProps.job_id_fk || null, // Tulee piilotetusta kentästä
+                    application_id_fk: formProps.application_id_fk,
+                    job_id_fk: formProps.job_id_fk || null,
                     yleisarvosana_arvio: getIntOrNull(formProps.yleisarvosana_arvio),
                     maatreet_valitut: maatreetValitut.length > 0 ? maatreetValitut : null,
                     motivaatio_arvio: getIntOrNull(formProps.motivaatio_arvio),
@@ -202,11 +228,6 @@
                     arviointi_lisatietoa_muuta: formProps.arviointi_lisatietoa_muuta || null
                 };
                 
-                // Ei tarvita erillistä Object.keys-looppia tyhjien arvioiden nollaamiseen,
-                // koska getIntOrNull hoitaa sen jo.
-
-                // console.log("Lähetetään Supabaseen (työnantajapalaute):", dataToSubmit);
-
                 const { data, error } = await supabaseClient
                     .from('tyonantaja_palautteet')
                     .insert([dataToSubmit])
@@ -220,7 +241,6 @@
                     }
                     if (submitButton) submitButton.disabled = false;
                 } else {
-                    // console.log('Tallennettu data:', data);
                     if (feedbackDiv) {
                         feedbackDiv.textContent = 'Palaute tallennettu onnistuneesti! Kiitos.';
                         feedbackDiv.className = 'success';

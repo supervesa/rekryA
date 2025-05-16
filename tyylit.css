@@ -40,7 +40,7 @@
     --color-text-label: var(--user-off-black);
     --color-text-legend: var(--user-off-black);
     --color-text-chip-default: #495057;
-    --color-text-chip-selected: var(--user-primary-color-text);
+    --color-text-chip-selected: var(--user-primary-color-text); /* Pidetään tekstin väri erilaisena valitussa tilassa */
     --color-text-slider-value: white;
     --color-text-button: white;
     --color-text-feedback-success: #155724;
@@ -50,7 +50,7 @@
     --bg-container: white;
     --bg-input: white;
     --bg-chip-default: #e9ecef;
-    --bg-chip-selected: #99caff;
+    --bg-chip-selected: #99caff; /* Taustaväri muuttuu edelleen valittaessa */
     --bg-slider-track-start: #99caff;
     --bg-slider-track-end: #007bff;
     --bg-slider-thumb: #007bff;
@@ -65,7 +65,7 @@
     --border-color-light: #eee;
     --border-color-medium: #ddd;
     --border-color-input: #ccc;
-    --border-color-chip-selected: #77aaff;
+    --border-color-chip-selected: #77aaff; /* Reunaväri muuttuu edelleen valittaessa */
     --border-color-focus: #007bff;
     --box-shadow-focus: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     --border-feedback-success: #c3e6cb;
@@ -87,10 +87,6 @@ body {
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.application-info {
-    display:none;
 }
 
 h1 {
@@ -149,6 +145,7 @@ label {
     font-size: var(--font-size-chip);
     border: 1px solid var(--border-color-light);
     font-family: var(--font-family-chip);
+    font-weight: normal; /* Varmistetaan normaali fontin paino oletuksena */
 }
 
 .chip-label:hover {
@@ -167,7 +164,8 @@ label {
     background-color: var(--bg-chip-selected);
     color: var(--color-text-chip-selected);
     border-color: var(--border-color-chip-selected);
-    font-weight: 500;
+    /* font-weight: 500; <- Tämä rivi aiheutti huojunnan, poistettu tai kommentoitu */
+    /* Fontin paino periytyy nyt .chip-label -säännöstä, joten se pysyy samana */
 }
 
 .chip-checkbox:focus + .chip-label {
@@ -211,7 +209,7 @@ textarea:focus {
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    width: calc(100% - 75px);
+    width: calc(100% - 75px); /* Pieni korjaus, jotta liukusäädin ja arvo mahtuvat paremmin */
     height: 10px;
     background: linear-gradient(to right, var(--bg-slider-track-start) 0%, var(--bg-slider-track-end) 100%);
     border-radius: 5px;
@@ -236,12 +234,12 @@ input[type="range"]::-webkit-slider-thumb {
     border-radius: 50%;
     border: 3px solid white;
     cursor: pointer;
-    margin-top: -7px;
+    margin-top: -7px; /* Korjaa peukalon pystysuuntaista asemointia */
     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
 input[type="range"]::-moz-range-thumb {
-    width: 22px;
+    width: 22px; /* Pieni säätö Firefoxille */
     height: 22px;
     background: var(--bg-slider-thumb);
     border-radius: 50%;
@@ -250,25 +248,28 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
+/* Lisätyt tyylit Firefoxin liukusäätimen ulkonäön parantamiseksi */
 input[type="range"]::-moz-range-track {
     width: 100%;
     height: 10px;
     background: linear-gradient(to right, var(--bg-slider-track-start) 0%, var(--bg-slider-track-end) 100%);
     border-radius: 5px;
-    border: none;
+    border: none; /* Poistetaan oletusreunus */
 }
+/* Varmistetaan, ettei Firefox yritä piirtää erillistä progress-palkkia radan päälle */
 input[type="range"]::-moz-range-progress {
-    background-color: transparent;
+    background-color: transparent; /* Tehdään progress-osa näkymättömäksi */
 }
-input[type="range"]::-moz-range-progress:empty {
+input[type="range"]::-moz-range-progress:empty { /* Varmuuden vuoksi myös tyhjälle */
     background-color: transparent;
 }
 
+
 .slider-value {
-    display: inline-flex;
+    display: inline-flex; /* Käytä inline-flex parempaan keskitykseen */
     align-items: center;
     justify-content: center;
-    width: 32px;
+    width: 32px; /* Määritä kiinteä leveys ja korkeus */
     height: 32px;
     text-align: center;
     font-weight: bold;
@@ -276,7 +277,7 @@ input[type="range"]::-moz-range-progress:empty {
     margin-left: 10px;
     background-color: var(--bg-slider-value);
     color: var(--color-text-slider-value);
-    border-radius: 50%;
+    border-radius: 50%; /* Täydellinen ympyrä */
     font-size: var(--font-size-slider-value);
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
@@ -296,9 +297,9 @@ button[type="submit"] {
     font-size: var(--font-size-button);
     font-weight: 600;
     transition: background-color 0.2s;
-    display: block;
-    width: 100%;
-    margin-top: 20px;
+    display: block; /* Varmistaa, että nappi vie koko leveyden ja mahdollistaa ylämarginaalin */
+    width: 100%; /* Vie koko leveyden */
+    margin-top: 20px; /* Lisää tilaa yläpuolelle */
 }
 
 button[type="submit"]:hover {
@@ -329,6 +330,7 @@ button[type="submit"]:disabled {
     border: 1px solid var(--border-feedback-error);
 }
 
+/* Mobiilioptimoinnit */
 @media (max-width: 600px) {
     :root {
         /* Pienennetään H1-otsikon oletuskokoa mobiilissa */
@@ -341,19 +343,41 @@ button[type="submit"]:disabled {
         padding-right: 0;
 
         /* Säilytetään aiemmat pystysuuntaiset marginaalit ja taustaväri ennallaan */
-        margin-top: 15px;
-        margin-bottom: 15px;
-        background-color: transparent;
+        margin-top: 15px; /* Pienennetty hieman mobiilille */
+        margin-bottom: 15px; /* Pienennetty hieman mobiilille */
+        background-color: transparent; /* Tai var(--bg-page) jos haluat saman taustan kuin desktopilla */
         /* padding-top ja padding-bottom olivat aiemmin 0, joten ne ovat ok */
     }
 
     .container {
         /* Aiemmin sovitut mobiilityylit containerille (Vaihtoehto A) */
-        background-color: transparent;
+        background-color: transparent; /* Tai var(--bg-container) jos haluat saman taustan */
         box-shadow: none;
         border-radius: 0;
-        width: auto;
+        width: auto; /* Ottaa koko leveyden miinus body-padding */
         min-height: auto;
+        padding: 15px; /* Lisätään paddingia containerin sisälle mobiilissa */
     }
 
 }
+
+.applicant-name-header {
+text-align: center;
+padding: 1rem;
+font-weight: 800;
+font-size: var( --font-size-h2);
+
+}
+
+    .applicant-name-header {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        #employer-job-info {
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+            color: #555;
+        }

@@ -8,20 +8,23 @@
 </head>
 <body>
     <div class="container">
-       
+        <div class="applicant-name-header">Vesa Nessling</div>
+        <div id="employer-job-info"></div> 
+        <div id="application-info"></div>
+
         <h1>Palaute työhaastattelustani</h1>
 
-        <p>Kiitos mahdollisuudesta päästä kertomaan itsestäni ja osaamisestani sekä kuulemaan avoinna olevasta paikasta. Vaikka tällä kertaa en tullut valituksi, haastatteluun liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää esiintymistäni ja vuorovaikutustani haastattelutilanteissa tulevaisuudessa. Kiitos paljon avustanne!</p>
+        <p id="intro-paragraph">Kiitos mahdollisuudesta päästä kertomaan itsestäni ja osaamisestani sekä kuulemaan [työnimike] -työtehtävästä. Vaikka tällä kertaa en tullut valituksi, haastatteluun liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää esiintymistäni ja vuorovaikutustani haastattelutilanteissa tulevaisuudessa. Kiitos paljon avustanne!</p>
 
         <form id="interviewFeedbackForm">
             <input type="hidden" id="application_id_fk" name="application_id_fk">
             <input type="hidden" id="job_id_fk" name="job_id_fk">
 
             <h2>1. Arvio ammattitaidostani ja soveltuvuudestani haastattelussa</h2>
-            <p class="section-description">Miten arvioitte osaamiseni ja ammattitaitoni ilmenemistä haastattelun aikana sekä sen vastaavuutta työtehtävän vaatimuksiin?</p>
+            <p class="section-description">Miten arvioitte osaamiseni ja ammattitaitoni ilmenemistä haastattelun aikana sekä sen vastaavuutta työtehtävän vaatimuksiin</p>
 
             <div class="slider-container">
-                <label for="q1_ammattitaito_yhteensopivuus">Miten arvioitte ammattitaitoni ilmenemistä ja yhteensopivuutta työtehtävään haastattelussa? (1 = vähäinen, 5 = erinomainen)</label>
+                <label for="q1_ammattitaito_yhteensopivuus">Minkä yleisarvosanan antaisitte haastattelulleni kokonaisuutena?</label>
                 <input type="range" id="q1_ammattitaito_yhteensopivuus" name="q1_ammattitaito_yhteensopivuus" min="1" max="5" step="1" value="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
@@ -66,7 +69,7 @@
                 <output class="slider-value">3</output>
             </div>
             <div class="slider-container">
-                <label for="q5_vahvuuksien_korostaminen_arvio">Miten hyvin sain mielestänne tuotettua vahvuuksiani esille haastattelussa?</label>
+                <label for="q5_vahvuuksien_korostaminen_arvio">Miten hyvin sain mielestänne tuotua vahvuuksiani esille haastattelussa?</label>
                 <input type="range" id="q5_vahvuuksien_korostaminen_arvio" name="q5_vahvuuksien_korostaminen_arvio" min="1" max="5" step="1" value="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
@@ -82,7 +85,7 @@
             </div>
 
             <h2>3. Motivaation, joustavuuden ja kehittymismahdollisuuksien arviointi haastattelussa</h2>
-            <p class="section-description">Miten hyvin onnistuin välittämään kiinnostukseni ja potentiaalini haastattelun aikana?</p>
+            <p class="section-description">Miten hyvin onnistuin välittämään kiinnostukseni ja kehityskykyni haastattelun aikana</p>
 
             <div class="slider-container">
                 <label for="q7_motivaatio_tehtavaan_yritykseen_arvio">Miten korkeaksi arvioitte motivaationi ja kiinnostukseni työtehtävää ja yritystänne kohtaan haastattelussa?</label>
@@ -109,9 +112,6 @@
             <button type="submit" id="submitButton">Lähetä haastattelupalaute</button>
             <div id="form-feedback"></div>
         </form>
-         <div class="applicant-name-header">Vesa Nessling</div>
-        <div id="application-info"></div>
-
     </div>
 
     <script>
@@ -134,6 +134,8 @@
             const feedbackDiv = document.getElementById('form-feedback');
             const submitButton = document.getElementById('submitButton');
             const applicationInfoDiv = document.getElementById('application-info');
+            const employerJobInfoDiv = document.getElementById('employer-job-info');
+            const introParagraph = document.getElementById('intro-paragraph');
             const appIdHiddenField = document.getElementById('application_id_fk');
             const jobIdHiddenField = document.getElementById('job_id_fk');
 
@@ -142,6 +144,30 @@
             const jobIdFk = urlParams.get('jobId');
             const applicantName = urlParams.get('applicantName');
             const jobTitle = urlParams.get('jobTitle');
+            const employerName = urlParams.get('employerName');
+
+            if (employerJobInfoDiv) {
+                let employerJobText = '';
+                if (employerName && jobTitle) {
+                    employerJobText = `${decodeURIComponent(employerName)} - ${decodeURIComponent(jobTitle)}`;
+                } else if (jobTitle) {
+                    employerJobText = decodeURIComponent(jobTitle);
+                } else if (employerName) {
+                    employerJobText = decodeURIComponent(employerName);
+                }
+                employerJobInfoDiv.textContent = employerJobText;
+            }
+
+            if (introParagraph) {
+                let currentText = introParagraph.innerHTML; 
+                if (jobTitle) {
+                    currentText = currentText.replace('[työnimike]', `"${decodeURIComponent(jobTitle)}"`);
+                } else {
+                    currentText = currentText.replace('[työnimike] -työtehtävästä', 'avoinna olevasta paikasta');
+                }
+                introParagraph.innerHTML = currentText;
+            }
+
 
             if (applicationIdFk) {
                 if (appIdHiddenField) {
@@ -150,11 +176,11 @@
                 if (applicationInfoDiv) {
                     let infoText = '';
                     if (applicantName && jobTitle) {
-                        infoText = `Palaute hakijan "${decodeURIComponent(applicantName)}" haastattelusta työpaikkaan "${decodeURIComponent(jobTitle)}" (Hakemus ID: ${applicationIdFk})`;
+                         infoText = `Palaute hakijan "${decodeURIComponent(applicantName)}" haastattelusta työpaikkaan "${decodeURIComponent(jobTitle)}" (Hakemus ID: ${applicationIdFk})`;
                     } else if (jobTitle) {
-                        infoText = `Palaute haastattelusta työpaikkaan: ${decodeURIComponent(jobTitle)} (Hakemus ID: ${applicationIdFk})`;
-                    } else if (applicantName && applicantName.toLowerCase() !== applicationIdFk.toLowerCase()) {
-                        infoText = `Palaute hakijan "${decodeURIComponent(applicantName)}" haastattelusta (Hakemus ID: ${applicationIdFk})`;
+                        infoText = `Palaute haastattelusta työpaikkaan "${decodeURIComponent(jobTitle)}" (Hakemus ID: ${applicationIdFk})`;
+                    } else if (applicantName) {
+                         infoText = `Palaute hakijan "${decodeURIComponent(applicantName)}" haastattelusta (Hakemus ID: ${applicationIdFk})`;
                     } else {
                         infoText = `Palaute haastattelusta hakemukselle ID: ${applicationIdFk}`;
                     }
@@ -194,7 +220,6 @@
                 const formProps = Object.fromEntries(formData);
 
                 const esiintymisluonneValinnat = [];
-                // Kerätään valitut checkboxit oikealla name-attribuutilla
                 form.querySelectorAll('input[name="q2_esiintymisluonne_valinnat"]:checked').forEach((checkbox) => {
                     esiintymisluonneValinnat.push(checkbox.value);
                 });
@@ -210,7 +235,6 @@
                 const finalApplicationIdFk = appIdHiddenField ? appIdHiddenField.value : null;
                 const finalJobIdFk = jobIdHiddenField ? jobIdHiddenField.value : null;
 
-                // Muodostetaan dataToSubmit-objekti käyttäen Supabase-taulun sarakkeiden nimiä
                 const dataToSubmit = {
                     application_id_fk: finalApplicationIdFk || null,
                     job_id_fk: finalJobIdFk || null,
