@@ -10,10 +10,8 @@
     <div class="container">
         <div class="applicant-name-header">Vesa Nessling</div>
 
-      
-
         <h1>Palaute työhaastattelustani</h1>
-                <div id="employer-job-info"></div> 
+        <div id="employer-job-info"></div> 
 
         <p id="intro-paragraph">Kiitos mahdollisuudesta päästä kertomaan itsestäni ja osaamisestani sekä kuulemaan [työnimike] -työtehtävästä. Vaikka tällä kertaa en tullut valituksi, haastatteluun liittyvä palautteenne olisi minulle erittäin arvokasta. Se auttaisi minua ymmärtämään, miten voisin kehittää esiintymistäni ja vuorovaikutustani haastattelutilanteissa tulevaisuudessa. Kiitos paljon avustanne!</p>
 
@@ -22,7 +20,7 @@
             <input type="hidden" id="job_id_fk" name="job_id_fk">
 
             <h2>1. Arvio ammattitaidostani ja soveltuvuudestani haastattelussa</h2>
-            <p class="section-description">Miten arvioitte osaamiseni ja ammattitaitoni ilmenemistä haastattelun aikana sekä sen vastaavuutta työtehtävän vaatimuksiin</p>
+            <p class="section-description">Miten arvioitte osaamiseni ja ammattitaitoni ilmenemistä haastattelun aikana sekä sen vastaavuutta työtehtävän vaatimuksiin?</p>
 
             <div class="slider-container">
                 <label for="q1_ammattitaito_yhteensopivuus">Minkä yleisarvosanan antaisitte haastattelulleni kokonaisuutena?</label>
@@ -86,7 +84,7 @@
             </div>
 
             <h2>3. Motivaation, joustavuuden ja kehittymismahdollisuuksien arviointi haastattelussa</h2>
-            <p class="section-description">Miten hyvin onnistuin välittämään kiinnostukseni ja kehityskykyni haastattelun aikana</p>
+            <p class="section-description">Miten hyvin onnistuin välittämään kiinnostukseni ja kehityskykyni haastattelun aikana?</p>
 
             <div class="slider-container">
                 <label for="q7_motivaatio_tehtavaan_yritykseen_arvio">Miten korkeaksi arvioitte motivaationi ja kiinnostukseni työtehtävää ja yritystänne kohtaan haastattelussa?</label>
@@ -99,13 +97,17 @@
                 <output class="slider-value">3</output>
             </div>
             <div class="slider-container">
-                <label for="q10_kasvupotentiaali_arvio">Miten arvioitte mahdollisuuksiani kehittyä ja kasvaa tässä tai vastaavassa työtehtävässä?</label>
+                <label for="q10_kasvupotentiaali_arvio">Miten arvioitte mahdollisuuksiani kehittyä ja kasvaa tässä tai vastaavassa työtehtävässä</label>
                 <input type="range" id="q10_kasvupotentiaali_arvio" name="q10_kasvupotentiaali_arvio" min="1" max="5" step="1" value="3" oninput="this.nextElementSibling.value = this.value">
                 <output class="slider-value">3</output>
             </div>
-
+            <div class="slider-container">
+                <label for="q12_kasvupotentiaali_arvio">Miten arvioitte erityisesti kehittymiskykyä ja halukkuuttani oppia uutta?</label>
+                <input type="range" id="q12_kasvupotentiaali_arvio" name="q12_kasvupotentiaali_arvio" min="1" max="5" step="1" value="3" oninput="this.nextElementSibling.value = this.value">
+                <output class="slider-value">3</output>
+            </div>
             <h2>4. Vapaamuotoiset huomiot ja kehitysvinkit haastatteluun liittyen</h2>
-            <p class="section-description">Tässä kohtaa pyytäisin teitä antamaan vapaamuotoista palautetta haastattelustani sekä erityisesti vinkkejä, miten voisin kehittää esiintymistäni ja viestintääni haastattelutilanteissa tulevaisuutta varten. Kaikki rakentava palaute on tervetullutta!</p>
+            <p class="section-description">Tässä kohtaa pyytäisin teitä antamaan vapaamuotoista palautetta haastattelustani sekä erityisesti vinkkejä, miten voisin kehittää esiintymistäni ja vuorovaikutustani haastattelutilanteissa tulevaisuutta varten. Kaikki rakentava palaute on tervetullutta!</p>
             <div>
                 <label for="lisatietoa_muuta">Vapaamuotoinen palaute ja vinkit haastatteluuni liittyen</label>
                 <textarea id="lisatietoa_muuta" name="lisatietoa_muuta" rows="5"></textarea>
@@ -163,16 +165,13 @@
            if (introParagraph) {
                 let currentText = introParagraph.innerHTML; 
                 if (jobTitle) {
-                    // Muuta työnimike pieniksi kirjaimiksi ja poista lainausmerkit
                     const formattedJobTitle = decodeURIComponent(jobTitle).toLowerCase();
                     currentText = currentText.replace('[työnimike]', formattedJobTitle);
                 } else {
-                    // Jos työnimikettä ei ole, korvataan paikkamerkki ja sitä ympäröivä teksti
                     currentText = currentText.replace('[työnimike] -työtehtävästä', 'avoinna olevasta paikasta');
                 }
                 introParagraph.innerHTML = currentText;
             }
-
 
             if (applicationIdFk) {
                 if (appIdHiddenField) {
@@ -246,7 +245,7 @@
                     q1_ammattitaito_yhteensopivuus: getIntOrNull(formProps.q1_ammattitaito_yhteensopivuus),
                     q4_osaamisen_tasmaaminen: getIntOrNull(formProps.q4_osaamisen_tasmaaminen),
                     q6_hakemuksen_todellisuuden_yhteensopivuus: getIntOrNull(formProps.q6_hakemuksen_todellisuuden_yhteensopivuus),
-                    q2_esiintymisluonne_valinnat: esiintymisluonneValinnat.length > 0 ? esiintymisluonneValinnat : null,
+                    q2_esiintymisluonne_valinnat: esiintymisluonneValinnat.length > 0 ? esiintymisluonneValinnat : null, // Lähetetään null jos tyhjä, muuten taulukko
                     q3_vastausten_selkeys_asiantuntemus: getIntOrNull(formProps.q3_vastausten_selkeys_asiantuntemus),
                     q5_vahvuuksien_korostaminen_arvio: getIntOrNull(formProps.q5_vahvuuksien_korostaminen_arvio),
                     q8_reagointi_haastaviin_tilanteisiin_arvio: getIntOrNull(formProps.q8_reagointi_haastaviin_tilanteisiin_arvio),
@@ -254,8 +253,12 @@
                     q7_motivaatio_tehtavaan_yritykseen_arvio: getIntOrNull(formProps.q7_motivaatio_tehtavaan_yritykseen_arvio),
                     q11_adaptiivisuus_muutoksiin_arvio: getIntOrNull(formProps.q11_adaptiivisuus_muutoksiin_arvio),
                     q10_kasvupotentiaali_arvio: getIntOrNull(formProps.q10_kasvupotentiaali_arvio),
+                    // LISÄTTY q12_kasvupotentiaali_arvio LÄHETETTÄVÄÄN DATAAN
+                    q12_kasvupotentiaali_arvio: getIntOrNull(formProps.q12_kasvupotentiaali_arvio),
                     lisatietoa_muuta: formProps.lisatietoa_muuta || null
                 };
+
+                console.log("Data to submit to Supabase:", dataToSubmit); // Lisätty debug-tulostus
 
                 const { data, error } = await supabaseClient
                     .from('haastattelut') 
@@ -276,10 +279,12 @@
                         form.reset();
                         document.querySelectorAll('input[type="range"]').forEach(slider => {
                            if (slider.nextElementSibling && slider.nextElementSibling.tagName === 'OUTPUT') {
-                               slider.nextElementSibling.value = slider.defaultValue || '3';
+                               // Aseta liukusäätimen arvo takaisin sen oletusarvoon (value-attribuutti HTML:ssä)
+                               slider.value = slider.defaultValue || '3'; 
+                               slider.nextElementSibling.value = slider.value;
                            }
                         });
-                        if (submitButton) submitButton.disabled = true;
+                        if (submitButton) submitButton.disabled = true; // Pidä lähetysnappi pois käytöstä onnistuneen lähetyksen jälkeen
                     }
                 }
             });
